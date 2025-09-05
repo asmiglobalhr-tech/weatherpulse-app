@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import SearchSuggestions from "./SearchSuggestions";
 
 interface SearchBarProps {
   onSearch: (city: string) => void;
@@ -10,12 +11,26 @@ interface SearchBarProps {
 
 const SearchBar = ({ onSearch, defaultValue = "" }: SearchBarProps) => {
   const [city, setCity] = useState(defaultValue);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (city.trim()) {
       onSearch(city.trim());
+      setShowSuggestions(false);
     }
+  };
+
+  const handleSuggestionSelect = (selectedCity: string) => {
+    setCity(selectedCity);
+    onSearch(selectedCity);
+    setShowSuggestions(false);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setCity(value);
+    setShowSuggestions(value.length >= 3);
   };
 
   return (
@@ -24,9 +39,16 @@ const SearchBar = ({ onSearch, defaultValue = "" }: SearchBarProps) => {
         <Input
           type="text"
           value={city}
-          onChange={(e) => setCity(e.target.value)}
+          onChange={handleInputChange}
+          onFocus={() => city.length >= 3 && setShowSuggestions(true)}
+          onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           placeholder="Enter city name..."
           className="bg-glass backdrop-blur-glass border-glass text-white placeholder:text-white/70 pr-4 pl-4 py-3 text-lg rounded-2xl focus:ring-2 focus:ring-white/50 focus:border-transparent"
+        />
+        <SearchSuggestions
+          query={city}
+          onSelect={handleSuggestionSelect}
+          isVisible={showSuggestions}
         />
       </div>
       <Button

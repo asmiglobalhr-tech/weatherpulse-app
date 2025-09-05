@@ -29,6 +29,20 @@ const HourlyForecast = ({ hourlyData }: HourlyForecastProps) => {
     return hourFromString === currentHour;
   };
 
+  const getWeatherIcon = (temperature: number, precipitationProbability: number, timeString: string) => {
+    const hour = new Date(timeString).getHours();
+    const isNight = hour < 6 || hour > 20;
+    
+    if (precipitationProbability > 30) {
+      return '🌧️';
+    } else if (isNight) {
+      return temperature >= 15 ? '🌙' : '🌙';
+    } else {
+      return temperature >= 25 ? '☀️' : 
+             temperature >= 15 ? '🌤️' : '☁️';
+    }
+  };
+
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-bold text-white text-center mb-6">
@@ -51,12 +65,10 @@ const HourlyForecast = ({ hourlyData }: HourlyForecastProps) => {
               </p>
               
               <div className="text-2xl mb-3">
-                {hour.temperature >= 25 ? '☀️' : 
-                 hour.temperature >= 15 ? '🌤️' : 
-                 hour.temperature >= 5 ? '☁️' : '🌨️'}
+                {getWeatherIcon(hour.temperature, hour.precipitationProbability, hour.time)}
               </div>
               
-              <p className="text-xl font-bold mb-3">{hour.temperature}°</p>
+              <p className="text-xl font-bold mb-3">{hour.temperature}°C</p>
               
               {hour.precipitationProbability > 0 && (
                 <div className="flex items-center justify-center gap-1 text-blue-200 mb-2">

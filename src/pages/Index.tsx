@@ -42,7 +42,7 @@ interface WeatherData {
 const Index = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(false);
-  const [currentCity, setCurrentCity] = useState("London");
+  const [currentCity, setCurrentCity] = useState("Jaipur");
   const { toast } = useToast();
 
   const handleSearch = async (cityName: string) => {
@@ -81,7 +81,7 @@ const Index = () => {
   };
 
   useEffect(() => {
-    handleSearch("London"); // Default city on load
+    handleSearch("Jaipur"); // Default city on load
   }, []);
 
   const getBackgroundClass = () => {

@@ -16,6 +16,26 @@ interface WeatherCardProps {
 }
 
 const WeatherCard = ({ weather, location }: WeatherCardProps) => {
+  const getWeatherIcon = () => {
+    const condition = weather.condition.toLowerCase();
+    const hour = new Date().getHours();
+    const isNight = hour < 6 || hour > 20;
+    
+    if (condition.includes('rain') || condition.includes('drizzle') || condition.includes('shower')) {
+      return '🌧️';
+    } else if (condition.includes('snow')) {
+      return '🌨️';
+    } else if (condition.includes('thunder')) {
+      return '⛈️';
+    } else if (isNight) {
+      return condition.includes('clear') ? '🌙' : '☁️';
+    } else {
+      if (condition.includes('clear') || condition.includes('sun')) return '☀️';
+      if (condition.includes('partly')) return '🌤️';
+      return '☁️';
+    }
+  };
+
   return (
     <Card className="bg-glass backdrop-blur-glass border-glass text-white p-8 rounded-3xl shadow-soft max-w-2xl mx-auto">
       <div className="text-center space-y-4">
@@ -27,8 +47,13 @@ const WeatherCard = ({ weather, location }: WeatherCardProps) => {
 
         {/* Main Temperature */}
         <div className="space-y-2">
-          <div className="text-7xl md:text-8xl font-bold tracking-tight">
-            {weather.temperature}°
+          <div className="flex items-center justify-center gap-4">
+            <div className="text-6xl">
+              {getWeatherIcon()}
+            </div>
+            <div className="text-7xl md:text-8xl font-bold tracking-tight">
+              {weather.temperature}°C
+            </div>
           </div>
           <p className="text-2xl text-white/90 capitalize">{weather.condition}</p>
         </div>
@@ -38,7 +63,7 @@ const WeatherCard = ({ weather, location }: WeatherCardProps) => {
           <div className="text-center">
             <Thermometer className="h-6 w-6 mx-auto mb-2 text-white/70" />
             <p className="text-sm text-white/70">Feels like</p>
-            <p className="text-xl font-semibold">{weather.feelsLike}°</p>
+            <p className="text-xl font-semibold">{weather.feelsLike}°C</p>
           </div>
           
           <div className="text-center">

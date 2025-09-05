@@ -66,8 +66,8 @@ const ForecastCard = ({
           
           <div className="text-right">
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold">{maxTemp}°</span>
-              <span className="text-lg text-white/70">{minTemp}°</span>
+              <span className="text-2xl font-bold">{maxTemp}°C</span>
+              <span className="text-lg text-white/70">{minTemp}°C</span>
             </div>
           </div>
         </div>

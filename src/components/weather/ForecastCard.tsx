@@ -18,10 +18,15 @@ const ForecastCard = ({
   precipitationProbability, 
   isToday = false 
 }: ForecastCardProps) => {
-  const formatDate = (dateString: string) => {
-    if (isToday) return "Today";
+  const formatDay = (dateString: string) => {
+    if (isToday) return "TODAY";
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { weekday: 'long' });
+    return date.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase();
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
   };
 
   const getWeatherIcon = (condition: string) => {
@@ -42,34 +47,72 @@ const ForecastCard = ({
     return '🌤️';
   };
 
+  const getDetailedCondition = (condition: string) => {
+    const conditionLower = condition.toLowerCase();
+    if (conditionLower.includes('clear')) {
+      return 'Clear and sunny';
+    } else if (conditionLower.includes('partly cloudy')) {
+      return 'Partly cloudy with sunshine';
+    } else if (conditionLower.includes('cloud')) {
+      return 'Mostly cloudy';
+    } else if (conditionLower.includes('rain')) {
+      return 'Expect some rain';
+    } else if (conditionLower.includes('thunder')) {
+      return 'Thunderstorms possible';
+    } else if (conditionLower.includes('snow')) {
+      return 'Snow expected';
+    }
+    return condition;
+  };
+
   return (
     <Card className="bg-glass backdrop-blur-glass border-glass text-white p-4 rounded-2xl shadow-soft hover:shadow-medium transition-all duration-300 hover:scale-[1.02]">
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <p className="font-semibold text-lg">
-            {formatDate(date)}
-          </p>
-          <p className="text-white/70 text-sm capitalize">{condition}</p>
+      <div className="grid grid-cols-12 gap-4 items-center">
+        {/* Day and Date */}
+        <div className="col-span-2">
+          <div className="text-left">
+            <p className="font-bold text-sm text-white/90">
+              {formatDay(date)}
+            </p>
+            <p className="text-xs text-white/70">
+              {formatDate(date)}
+            </p>
+          </div>
         </div>
-        
-        <div className="flex items-center gap-4">
-          {precipitationProbability > 0 && (
-            <div className="flex items-center gap-1 text-blue-200">
-              <Droplets className="h-4 w-4" />
-              <span className="text-sm">{precipitationProbability}%</span>
-            </div>
-          )}
-          
+
+        {/* Weather Icon */}
+        <div className="col-span-1 text-center">
           <div className="text-2xl">
             {getWeatherIcon(condition)}
           </div>
-          
-          <div className="text-right">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold">{maxTemp}°C</span>
-              <span className="text-lg text-white/70">{minTemp}°C</span>
-            </div>
+        </div>
+
+        {/* Temperature */}
+        <div className="col-span-3 text-left">
+          <div className="flex items-baseline gap-1">
+            <span className="text-2xl font-bold">{maxTemp}°</span>
+            <span className="text-lg text-white/60">{minTemp}°</span>
           </div>
+        </div>
+
+        {/* Weather Description */}
+        <div className="col-span-4 text-center">
+          <p className="text-sm font-medium text-white/90 capitalize">
+            {getDetailedCondition(condition)}
+          </p>
+          <p className="text-xs text-white/70 mt-1">
+            {condition}
+          </p>
+        </div>
+
+        {/* Rain Probability */}
+        <div className="col-span-2 text-right">
+          {precipitationProbability > 0 && (
+            <div className="flex items-center justify-end gap-1 text-blue-200">
+              <Droplets className="h-4 w-4" />
+              <span className="text-sm font-medium">{precipitationProbability}%</span>
+            </div>
+          )}
         </div>
       </div>
     </Card>
